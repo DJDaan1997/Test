@@ -1,5 +1,5 @@
 const secondsFromTime = (value) => {
-  const [h = 0, m = 0, s = 0] = value.split(':').map(Number);
+  const [h = 0, m = 0, s = 0] = String(value || '0:0:0').split(':').map(Number);
   return h * 3600 + m * 60 + s;
 };
 
@@ -10,6 +10,89 @@ const formatSeconds = (seconds) => {
   const m = Math.floor((abs % 3600) / 60);
   const s = abs % 60;
   return `${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
+
+const formatMetric = (metric, value) => {
+  if (value === null || value === undefined || value === '') return '-';
+  if (metric.type === 'time') return formatSeconds(secondsFromTime(value));
+  if (metric.type === 'rank') return `#${value}`;
+  return `${value}${metric.unit ? ` ${metric.unit}` : ''}`;
+};
+
+const metricDelta = (metric, baseline, second) => {
+  if (baseline === null || baseline === undefined || second === null || second === undefined) {
+    return null;
+  }
+
+  const baselineValue = metric.type === 'time' ? secondsFromTime(baseline) : Number(baseline);
+  const secondValue = metric.type === 'time' ? secondsFromTime(second) : Number(second);
+  const diff = secondValue - baselineValue;
+
+  const lowerIsBetter = metric.lowerIsBetter !== false;
+  const improved = lowerIsBetter ? diff < 0 : diff > 0;
+  const worsened = lowerIsBetter ? diff > 0 : diff < 0;
+
+  return {
+    diff,
+    direction: improved ? 'Verbeterd' : worsened ? 'Verslechterd' : 'Gelijk',
+    state: improved ? 'improved' : worsened ? 'worsened' : 'equal',
+    formatted: metric.type === 'time' ? formatSeconds(diff) : `${diff > 0 ? '+' : ''}${diff}${metric.unit ? ` ${metric.unit}` : ''}`,
+  };
+};
+
+const renderDetailedComparison = (analysis) => {
+  const host = document.getElementById('detailedCompare');
+  host.innerHTML = '';
+
+  for (const category of analysis.categories || []) {
+    const section = document.createElement('section');
+    section.className = 'detail-category';
+
+    const heading = document.createElement('h3');
+    heading.textContent = category.title;
+    section.appendChild(heading);
+
+    const metrics = (category.metrics || []).filter((m) => m.baseline !== null || m.second !== null);
+    if (metrics.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'empty-note';
+      empty.textContent = 'Nog geen detaildata ingevuld voor dit onderdeel.';
+      section.appendChild(empty);
+      host.appendChild(section);
+      continue;
+    }
+
+    const table = document.createElement('table');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Onderdeel</th>
+          <th>Amsterdam 2026 (baseline)</th>
+          <th>Rotterdam 2026</th>
+          <th>Delta t.o.v. baseline</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector('tbody');
+    for (const metric of metrics) {
+      const delta = metricDelta(metric, metric.baseline, metric.second);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${metric.name}</td>
+        <td>${formatMetric(metric, metric.baseline)}</td>
+        <td>${formatMetric(metric, metric.second)}</td>
+        <td>${delta ? delta.formatted : '-'}</td>
+        <td><span class="status ${delta ? delta.state : 'equal'}">${delta ? delta.direction : 'Onbekend'}</span></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    section.appendChild(table);
+    host.appendChild(section);
+  }
 };
 
 const render = async () => {
@@ -34,6 +117,7 @@ const render = async () => {
   ];
 
   const cardsEl = document.getElementById('summaryCards');
+  cardsEl.innerHTML = '';
   cards.forEach((card) => {
     const el = document.createElement('article');
     el.className = 'card';
@@ -42,6 +126,7 @@ const render = async () => {
   });
 
   const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = '';
   races.forEach((race) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -85,6 +170,20 @@ const render = async () => {
   raceA.addEventListener('change', updateCompare);
   raceB.addEventListener('change', updateCompare);
   updateCompare();
+
+  const baselineRace = races.find((race) => race.id === data.analysis?.baselineRaceId) || races[0];
+  const secondRace = races.find((race) => race.id === data.analysis?.compareRaceId) || races[1];
+  if (baselineRace && secondRace) {
+    const summaryDiff = secondsFromTime(secondRace.time) - secondsFromTime(baselineRace.time);
+    const summaryTrend = summaryDiff < 0 ? 'verbeterd' : summaryDiff > 0 ? 'verslechterd' : 'gelijk gebleven';
+    document.getElementById('baselineSummary').innerHTML = `
+      Baseline: <strong>${baselineRace.event}</strong> (${baselineRace.time}, #${baselineRace.rank ?? '-'})<br/>
+      Tweede poging: <strong>${secondRace.event}</strong> (${secondRace.time}, #${secondRace.rank ?? '-'})<br/>
+      Resultaat t.o.v. eerste race: <strong>${formatSeconds(summaryDiff)}</strong> (${summaryTrend}).
+    `;
+  }
+
+  renderDetailedComparison(data.analysis || { categories: [] });
 
   const ctx = document.getElementById('timeChart');
   new Chart(ctx, {

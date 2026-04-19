@@ -16,6 +16,13 @@ const cleanTime = (value) => {
   return `${h}:${m}:${s}`;
 };
 
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
 const parseRaceText = (text) => {
   const normalized = decode(text).replace(/\s+/g, ' ').trim();
   const match = normalized.match(/(?<time>\d{1,2}:\d{2}:\d{2})\s*#\s*(?<rank>\d+)\s*(?<tail>.+)$/);
@@ -33,6 +40,7 @@ const parseRaceText = (text) => {
   const year = Number(yearMatch?.[1] ?? new Date().getUTCFullYear());
 
   return {
+    id: slugify(event),
     date: `${year}-01-01`,
     event,
     division: division || 'Onbekend',
@@ -55,6 +63,7 @@ const parseRacesFromHtml = (html) => {
 };
 
 const fallbackData = JSON.parse(await readFile(OUTPUT_FILE, 'utf8'));
+const raceMap = new Map((fallbackData.races || []).map((race) => [race.event, race]));
 
 try {
   const response = await fetch(SOURCE_URL, {
@@ -74,10 +83,16 @@ try {
     throw new Error('No races found in HTML response');
   }
 
+  const mergedRaces = races.map((race) => ({
+    ...raceMap.get(race.event),
+    ...race,
+  }));
+
   const payload = {
     athlete: fallbackData.athlete,
     updatedAt: new Date().toISOString(),
-    races,
+    races: mergedRaces,
+    analysis: fallbackData.analysis,
   };
 
   await writeFile(OUTPUT_FILE, `${JSON.stringify(payload, null, 2)}\n`);

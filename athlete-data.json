@@ -6,20 +6,78 @@
   "updatedAt": "2026-04-19T00:00:00.000Z",
   "races": [
     {
+      "id": "amsterdam-2026",
       "date": "2026-02-01",
       "event": "HYROX Amsterdam 2026",
       "division": "DOUBLES WOMEN 16-24",
       "time": "01:17:57",
       "rank": 378,
-      "partner": "Nance Van Der Lem"
+      "partner": "Nance Van Der Lem",
+      "links": {
+        "totals": "https://www.hyresult.com/result/LR3MS4JI456B46?tab=totals",
+        "runs": "https://www.hyresult.com/result/LR3MS4JI456B46?tab=runs",
+        "workouts": "https://www.hyresult.com/result/LR3MS4JI456B46?tab=workouts",
+        "splits": "https://www.hyresult.com/result/LR3MS4JI456B46?tab=splits",
+        "simulator": "https://www.hyresult.com/simulator?idp=LR3MS4JI456B46"
+      }
     },
     {
+      "id": "rotterdam-2026",
       "date": "2026-04-19",
       "event": "HYROX Rotterdam 2026",
       "division": "DOUBLES WOMEN 25-29",
       "time": "01:11:38",
       "rank": 98,
-      "partner": "Tess de Graaf"
+      "partner": "Tess de Graaf",
+      "links": {
+        "totals": "https://www.hyresult.com/result/LR3MS4JI4BFE36?tab=totals",
+        "runs": "https://www.hyresult.com/result/LR3MS4JI4BFE36?tab=runs",
+        "workouts": "https://www.hyresult.com/result/LR3MS4JI4BFE36?tab=workouts",
+        "splits": "https://www.hyresult.com/result/LR3MS4JI4BFE36?tab=splits",
+        "simulator": "https://www.hyresult.com/simulator?idp=LR3MS4JI4BFE36"
+      }
     }
-  ]
+  ],
+  "analysis": {
+    "baselineRaceId": "amsterdam-2026",
+    "compareRaceId": "rotterdam-2026",
+    "categories": [
+      {
+        "id": "totals",
+        "title": "Totals",
+        "metrics": [
+          {
+            "name": "Totale tijd",
+            "type": "time",
+            "baseline": "01:17:57",
+            "second": "01:11:38",
+            "lowerIsBetter": true
+          },
+          {
+            "name": "Overall rank",
+            "type": "rank",
+            "baseline": 378,
+            "second": 98,
+            "lowerIsBetter": true
+          }
+        ]
+      },
+      {
+        "id": "runs",
+        "title": "Runs",
+        "metrics": []
+      },
+      {
+        "id": "workouts",
+        "title": "Workouts",
+        "metrics": []
+      },
+      {
+        "id": "splits",
+        "title": "Splits",
+        "metrics": []
+      }
+    ],
+    "notes": "Vul metrics per onderdeel met data uit de HYRESULT tabs (runs/workouts/splits) om volledige verdieping te tonen."
+  }
 }

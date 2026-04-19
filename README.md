@@ -3,7 +3,9 @@
 Een simpele website met:
 - alle gevonden races;
 - PB / gemiddelde / trend;
-- vergelijking van 2 races naast elkaar.
+- vergelijking van 2 races naast elkaar;
+- baseline-analyse: Amsterdam 2026 (eerste race) vs Rotterdam 2026 (tweede race);
+- detailvergelijking per onderdeel (`totals`, `runs`, `workouts`, `splits`).
 
 ## Live via GitHub Pages
 1. Push deze repo naar GitHub.
@@ -16,5 +18,14 @@ Een simpele website met:
 - Draait elke 6 uur en probeert de data van `https://www.hyresult.com/athlete/mabel-de-glas` te vernieuwen.
 - Als er nieuwe resultaten zijn, commit de workflow automatisch `athlete-data.json`.
 
+## Verdiepte analyse invullen
+- Bestand: `athlete-data.json`
+- Vul in `analysis.categories` de metrics per tab in met waarden voor:
+  - `baseline` = Amsterdam 2026
+  - `second` = Rotterdam 2026
+- Voor tijdmetrieken gebruik `type: "time"` met `HH:MM:SS`.
+- Voor ranking/met numerieke data gebruik `type: "rank"` of `type: "number"`.
+
 ## Let op
-De scraper leest tekst uit de publieke HYRESULT-pagina. Als hun HTML-structuur verandert, moet `scripts/fetch-hyrox-data.mjs` mogelijk aangepast worden.
+- HYRESULT verandert soms HTML/anti-bot gedrag; daardoor is data scraping niet altijd stabiel.
+- De site toont verbetering/verslechtering expliciet ten opzichte van de eerste race (baseline).
