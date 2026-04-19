@@ -20,9 +20,7 @@ const formatMetric = (metric, value) => {
 };
 
 const metricDelta = (metric, baseline, second) => {
-  if (baseline === null || baseline === undefined || second === null || second === undefined) {
-    return null;
-  }
+  if (baseline === null || baseline === undefined || second === null || second === undefined) return null;
 
   const baselineValue = metric.type === 'time' ? secondsFromTime(baseline) : Number(baseline);
   const secondValue = metric.type === 'time' ? secondsFromTime(second) : Number(second);
@@ -33,7 +31,6 @@ const metricDelta = (metric, baseline, second) => {
   const worsened = lowerIsBetter ? diff > 0 : diff < 0;
 
   return {
-    diff,
     direction: improved ? 'Verbeterd' : worsened ? 'Verslechterd' : 'Gelijk',
     state: improved ? 'improved' : worsened ? 'worsened' : 'equal',
     formatted: metric.type === 'time' ? formatSeconds(diff) : `${diff > 0 ? '+' : ''}${diff}${metric.unit ? ` ${metric.unit}` : ''}`,
@@ -97,6 +94,50 @@ const renderDetailedComparison = (analysis) => {
   }
 };
 
+const renderCategoryChart = (canvasId, category, labelA, labelB) => {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !category) return;
+
+  const timeMetrics = (category.metrics || []).filter((metric) => metric.type === 'time' && metric.baseline && metric.second);
+  if (timeMetrics.length === 0) return;
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: timeMetrics.map((metric) => metric.name),
+      datasets: [
+        {
+          label: labelA,
+          data: timeMetrics.map((metric) => secondsFromTime(metric.baseline)),
+          backgroundColor: '#4bc5ff',
+        },
+        {
+          label: labelB,
+          data: timeMetrics.map((metric) => secondsFromTime(metric.second)),
+          backgroundColor: '#95f590',
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.dataset.label}: ${formatSeconds(ctx.parsed.y)}`,
+          },
+        },
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: (value) => formatSeconds(Number(value)),
+          },
+        },
+      },
+    },
+  });
+};
+
 const render = async () => {
   const res = await fetch('./athlete-data.json', { cache: 'no-store' });
   const data = await res.json();
@@ -109,13 +150,12 @@ const render = async () => {
     return acc;
   }, null);
 
-  const avgSeconds = Math.round(races.reduce((sum, r) => sum + secondsFromTime(r.time), 0) / races.length);
-
+  const avgSeconds = Math.round(races.reduce((sum, race) => sum + secondsFromTime(race.time), 0) / races.length);
   const cards = [
     { title: 'Totaal races', value: races.length },
     { title: 'Persoonlijke beste', value: best?.time ?? '-' },
     { title: 'Gemiddelde tijd', value: formatSeconds(avgSeconds) },
-    { title: 'Beste rank', value: `#${Math.min(...races.map((r) => r.rank || 99999))}` },
+    { title: 'Beste rank', value: `#${Math.min(...races.map((race) => race.rank || 99999))}` },
   ];
 
   const cardsEl = document.getElementById('summaryCards');
@@ -143,7 +183,7 @@ const render = async () => {
   });
 
   const optionsHtml = races
-    .map((r, idx) => `<option value="${idx}">${new Date(r.date).toLocaleDateString('nl-NL')} · ${r.event} (${r.time})</option>`)
+    .map((race, idx) => `<option value="${idx}">${new Date(race.date).toLocaleDateString('nl-NL')} · ${race.event} (${race.time})</option>`)
     .join('');
 
   const raceA = document.getElementById('raceA');
@@ -175,6 +215,7 @@ const render = async () => {
 
   const baselineRace = races.find((race) => race.id === data.analysis?.baselineRaceId) || races[0];
   const secondRace = races.find((race) => race.id === data.analysis?.compareRaceId) || races[1];
+
   if (baselineRace && secondRace) {
     const summaryDiff = secondsFromTime(secondRace.time) - secondsFromTime(baselineRace.time);
     const summaryTrend = summaryDiff < 0 ? 'verbeterd' : summaryDiff > 0 ? 'verslechterd' : 'gelijk gebleven';
@@ -185,16 +226,22 @@ const render = async () => {
     `;
   }
 
-  renderDetailedComparison(data.analysis || { categories: [] });
+  const analysis = data.analysis || { categories: [] };
+  renderDetailedComparison(analysis);
+
+  const categories = Object.fromEntries((analysis.categories || []).map((category) => [category.id, category]));
+  renderCategoryChart('runsChart', categories.runs, 'Amsterdam 2026', 'Rotterdam 2026');
+  renderCategoryChart('workoutsChart', categories.workouts, 'Amsterdam 2026', 'Rotterdam 2026');
+  renderCategoryChart('splitsChart', categories.splits, 'Amsterdam 2026', 'Rotterdam 2026');
 
   const ctx = document.getElementById('timeChart');
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: races.map((r) => `${new Date(r.date).toLocaleDateString('nl-NL')}\n${r.event}`),
+      labels: races.map((race) => `${new Date(race.date).toLocaleDateString('nl-NL')}\n${race.event}`),
       datasets: [{
         label: 'Totale tijd (sec)',
-        data: races.map((r) => secondsFromTime(r.time)),
+        data: races.map((race) => secondsFromTime(race.time)),
         borderColor: '#4bc5ff',
         pointBackgroundColor: '#95f590',
         tension: 0.2,
@@ -204,7 +251,7 @@ const render = async () => {
       plugins: {
         tooltip: {
           callbacks: {
-            label: (ctx) => ` ${formatSeconds(ctx.parsed.y)}`,
+            label: (ctx2) => ` ${formatSeconds(ctx2.parsed.y)}`,
           },
         },
       },

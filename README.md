@@ -6,6 +6,7 @@ Een simpele website met:
 - vergelijking van 2 races naast elkaar;
 - baseline-analyse: Amsterdam 2026 (eerste race) vs Rotterdam 2026 (tweede race);
 - detailvergelijking per onderdeel (`totals`, `runs`, `workouts`, `splits`).
+- extra grafieken per onderdeel (bars) voor baseline vs tweede race.
 
 ## Live via GitHub Pages
 1. Push deze repo naar GitHub.

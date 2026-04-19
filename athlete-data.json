@@ -46,38 +46,57 @@
         "id": "totals",
         "title": "Totals",
         "metrics": [
-          {
-            "name": "Totale tijd",
-            "type": "time",
-            "baseline": "01:17:57",
-            "second": "01:11:38",
-            "lowerIsBetter": true
-          },
-          {
-            "name": "Overall rank",
-            "type": "rank",
-            "baseline": 378,
-            "second": 98,
-            "lowerIsBetter": true
-          }
+          { "name": "Totale tijd", "type": "time", "baseline": "01:17:57", "second": "01:11:38", "lowerIsBetter": true },
+          { "name": "Overall rank", "type": "rank", "baseline": 378, "second": 98, "lowerIsBetter": true },
+          { "name": "Runs totaal", "type": "time", "baseline": "00:44:22", "second": "00:39:31", "lowerIsBetter": true },
+          { "name": "Runs rank", "type": "rank", "baseline": 451, "second": 89, "lowerIsBetter": true },
+          { "name": "Workouts totaal", "type": "time", "baseline": "00:27:00", "second": "00:26:20", "lowerIsBetter": true },
+          { "name": "Workouts rank", "type": "rank", "baseline": 278, "second": 190, "lowerIsBetter": true },
+          { "name": "Roxzone totaal", "type": "time", "baseline": "00:06:35", "second": "00:05:47", "lowerIsBetter": true },
+          { "name": "Roxzone rank", "type": "rank", "baseline": 526, "second": 214, "lowerIsBetter": true }
         ]
       },
       {
         "id": "runs",
         "title": "Runs",
-        "metrics": []
+        "metrics": [
+          { "name": "Run 1", "type": "time", "baseline": "00:04:06", "second": "00:04:59", "lowerIsBetter": true },
+          { "name": "Run 2", "type": "time", "baseline": "00:05:19", "second": "00:04:29", "lowerIsBetter": true },
+          { "name": "Run 3", "type": "time", "baseline": "00:05:40", "second": "00:04:54", "lowerIsBetter": true },
+          { "name": "Run 4", "type": "time", "baseline": "00:05:31", "second": "00:04:54", "lowerIsBetter": true },
+          { "name": "Run 5", "type": "time", "baseline": "00:05:47", "second": "00:04:54", "lowerIsBetter": true },
+          { "name": "Run 6", "type": "time", "baseline": "00:05:47", "second": "00:04:52", "lowerIsBetter": true },
+          { "name": "Run 7", "type": "time", "baseline": "00:05:51", "second": "00:05:01", "lowerIsBetter": true },
+          { "name": "Run 8", "type": "time", "baseline": "00:06:25", "second": "00:05:33", "lowerIsBetter": true },
+          { "name": "Gemiddelde pace", "type": "time", "baseline": "00:05:33", "second": "00:04:56", "lowerIsBetter": true }
+        ]
       },
       {
         "id": "workouts",
         "title": "Workouts",
-        "metrics": []
+        "metrics": [
+          { "name": "SkiErg", "type": "time", "baseline": "00:04:22", "second": "00:04:43", "lowerIsBetter": true },
+          { "name": "Sled Push", "type": "time", "baseline": "00:01:34", "second": "00:01:44", "lowerIsBetter": true },
+          { "name": "Sled Pull", "type": "time", "baseline": "00:03:22", "second": "00:03:15", "lowerIsBetter": true },
+          { "name": "Burpee Broad Jump", "type": "time", "baseline": "00:04:09", "second": "00:03:31", "lowerIsBetter": true },
+          { "name": "Row", "type": "time", "baseline": "00:04:44", "second": "00:04:45", "lowerIsBetter": true },
+          { "name": "Farmers Carry", "type": "time", "baseline": "00:01:29", "second": "00:01:24", "lowerIsBetter": true },
+          { "name": "Sandbag Lunges", "type": "time", "baseline": "00:03:22", "second": "00:03:14", "lowerIsBetter": true },
+          { "name": "Wall Balls", "type": "time", "baseline": "00:03:58", "second": "00:03:44", "lowerIsBetter": true },
+          { "name": "Workout totaal", "type": "time", "baseline": "00:27:00", "second": "00:26:20", "lowerIsBetter": true }
+        ]
       },
       {
         "id": "splits",
         "title": "Splits",
-        "metrics": []
+        "metrics": [
+          { "name": "Roxzone totaal", "type": "time", "baseline": "00:06:35", "second": "00:05:47", "lowerIsBetter": true },
+          { "name": "Roxzone gemiddeld per station", "type": "time", "baseline": "00:00:49", "second": "00:00:43", "lowerIsBetter": true },
+          { "name": "Laatste run naar Wall Balls", "type": "time", "baseline": "00:06:25", "second": "00:05:33", "lowerIsBetter": true },
+          { "name": "Wall Balls slotdeel", "type": "time", "baseline": "00:03:58", "second": "00:03:43", "lowerIsBetter": true }
+        ]
       }
     ],
-    "notes": "Vul metrics per onderdeel met data uit de HYRESULT tabs (runs/workouts/splits) om volledige verdieping te tonen."
+    "notes": "Data ingevuld op basis van HYRESULT tabs totals, runs, workouts en splits voor Amsterdam 2026 en Rotterdam 2026."
   }
 }
