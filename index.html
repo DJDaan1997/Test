@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HYROX Dashboard - Mabel de Glas</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>HYROX Dashboard – Mabel de Glas</h1>
+      <p>
+        Overzicht van prestaties, trend per race en vergelijking van resultaten.
+      </p>
+      <div class="meta" id="lastUpdated">Laden...</div>
+    </header>
+
+    <main>
+      <section class="cards" id="summaryCards"></section>
+
+      <section class="panel">
+        <h2>Progressie per race (totale tijd)</h2>
+        <canvas id="timeChart" height="120"></canvas>
+      </section>
+
+      <section class="panel">
+        <h2>Analyse: Rotterdam 2026 vs Amsterdam 2026 (baseline)</h2>
+        <p class="compare-result" id="baselineSummary"></p>
+        <div id="detailedCompare"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Grafieken per onderdeel (baseline vs tweede race)</h2>
+        <div class="chart-grid">
+          <article>
+            <h3>Runs</h3>
+            <canvas id="runsChart" height="200"></canvas>
+          </article>
+          <article>
+            <h3>Workouts</h3>
+            <canvas id="workoutsChart" height="200"></canvas>
+          </article>
+          <article>
+            <h3>Splits</h3>
+            <canvas id="splitsChart" height="200"></canvas>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Races vergelijken</h2>
+        <div class="compare-controls">
+          <label>
+            Race A
+            <select id="raceA"></select>
+          </label>
+          <label>
+            Race B
+            <select id="raceB"></select>
+          </label>
+        </div>
+        <div id="compareResult" class="compare-result"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Alle resultaten</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Event</th>
+              <th>Tijd</th>
+              <th>Plaatsing</th>
+              <th>Categorie</th>
+              <th>Partner</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      Bron:
+      <a href="https://www.hyresult.com/athlete/mabel-de-glas" target="_blank" rel="noreferrer">
+        hyresult.com/athlete/mabel-de-glas
+      </a>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
