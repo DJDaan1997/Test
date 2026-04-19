@@ -44,23 +44,25 @@ const renderDetailedComparison = (analysis) => {
   const host = document.getElementById('detailedCompare');
   host.innerHTML = '';
 
-  for (const category of analysis.categories || []) {
+  const categoriesWithData = (analysis.categories || [])
+    .map((category) => ({
+      ...category,
+      metrics: (category.metrics || []).filter((metric) => metric.baseline !== null || metric.second !== null),
+    }))
+    .filter((category) => category.metrics.length > 0);
+
+  if (categoriesWithData.length === 0) {
+    host.innerHTML = '<p class="empty-note">Nog geen verdiepte metrics beschikbaar.</p>';
+    return;
+  }
+
+  for (const category of categoriesWithData) {
     const section = document.createElement('section');
     section.className = 'detail-category';
 
     const heading = document.createElement('h3');
     heading.textContent = category.title;
     section.appendChild(heading);
-
-    const metrics = (category.metrics || []).filter((m) => m.baseline !== null || m.second !== null);
-    if (metrics.length === 0) {
-      const empty = document.createElement('p');
-      empty.className = 'empty-note';
-      empty.textContent = 'Nog geen detaildata ingevuld voor dit onderdeel.';
-      section.appendChild(empty);
-      host.appendChild(section);
-      continue;
-    }
 
     const table = document.createElement('table');
     table.innerHTML = `
@@ -77,7 +79,7 @@ const renderDetailedComparison = (analysis) => {
     `;
 
     const tbody = table.querySelector('tbody');
-    for (const metric of metrics) {
+    for (const metric of category.metrics) {
       const delta = metricDelta(metric, metric.baseline, metric.second);
       const tr = document.createElement('tr');
       tr.innerHTML = `
